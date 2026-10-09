@@ -1,17 +1,12 @@
-interface LocationInput {
-    locationName: string;
-    city: string;
-    state: string;
-    country: string;
+import type { LocationInput } from './validation';
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
 }
 
-interface Coordinates {
-    longitude: number;
-    latitude:  number;
-}
-
-interface Location extends LocationInput, Coordinates {
-  locationId: number;
+export interface Location extends LocationInput, Coordinates {
+  locationId: string; 
   createdAt: string;
   updatedAt: string;
 }
