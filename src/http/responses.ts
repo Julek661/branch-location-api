@@ -7,9 +7,13 @@ const statusByCode: Record<string, number> = {
   GEOCODER_UNAVAILABLE: 502,
 };
 
-export const toJson = (statusCode: number, body: unknown): APIGatewayProxyResult => ({
+export const toJson = (
+  statusCode: number,
+  body: unknown,
+  headers: Record<string, string> = {},
+): APIGatewayProxyResult => ({
   statusCode,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/json', ...headers },
   body: JSON.stringify(body),
 });
 
