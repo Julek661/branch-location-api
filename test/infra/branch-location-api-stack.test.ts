@@ -33,24 +33,25 @@ describe('BranchLocationApiStack', () => {
   });
 
   describe('given the IAM policies', () => {
-    it('only lets the create function write to the table', () => {
+   
+    it('only lets the create function put items', () => {
       template.resourcePropertiesCountIs(
         'AWS::IAM::Policy',
         {
           PolicyDocument: {
-            Statement: Match.arrayWith([Match.objectLike({ Action: Match.arrayWith(['dynamodb:PutItem']) })]),
+            Statement: Match.arrayWith([Match.objectLike({ Action: 'dynamodb:PutItem' })]),
           },
         },
         1,
       );
     });
 
-    it('only lets the get function read from the table', () => {
+    it('only lets the get function get items', () => {
       template.resourcePropertiesCountIs(
         'AWS::IAM::Policy',
         {
           PolicyDocument: {
-            Statement: Match.arrayWith([Match.objectLike({ Action: Match.arrayWith(['dynamodb:GetItem']) })]),
+            Statement: Match.arrayWith([Match.objectLike({ Action: 'dynamodb:GetItem' })]),
           },
         },
         1,

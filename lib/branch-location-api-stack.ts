@@ -19,10 +19,11 @@ export class BranchLocationApiStack extends cdk.Stack {
     });
 
     const createLocationFn = this.createFunction('CreateLocationFunction', 'create-location.ts', table);
-    table.grantWriteData(createLocationFn);
+
+    table.grant(createLocationFn, 'dynamodb:PutItem');
 
     const getLocationFn = this.createFunction('GetLocationFunction', 'get-location.ts', table);
-    table.grantReadData(getLocationFn);
+    table.grant(getLocationFn, 'dynamodb:GetItem');
 
     const accessLogs = new logs.LogGroup(this, 'BranchLocAccessLogs', {
       retention: logs.RetentionDays.ONE_MONTH,
