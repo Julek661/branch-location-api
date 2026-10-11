@@ -28,10 +28,10 @@ describe('parseLocationInput', () => {
   describe('given fields with surrounding whitespace', () => {
     it('trims whitespace from all fields', () => {
       const result = parseLocationInput({
-       locationName: 'Leeds Branch',
-       city: 'Leeds',
-       state: 'West Yorkshire',
-       country: 'UK', 
+        locationName: '  Leeds Branch  ',
+        city: ' Leeds ',
+        state: '\tWest Yorkshire\n',
+        country: ' UK ',
       });
 
       expect(result).toEqual(validBody);

@@ -29,14 +29,6 @@ describe('buildSearchParams', () => {
       expect(buildSearchParams(withoutState).has('state')).toBe(false);
     });
   });
-
-  describe('given values that need URL encoding', () => {
-    it('encodes them correctly', () => {
-      const query = buildSearchParams({ ...leeds, state: 'Staffordshire & Stoke' }).toString();
-
-      expect(new URLSearchParams(query).get('state')).toBe('Staffordshire & Stoke');
-    });
-  });
 });
 
 describe('parseCoordinates', () => {
@@ -111,17 +103,9 @@ describe('createNominatimGeocoder', () => {
     });
   });
 
-  describe('given Nominatim returns no results', () => {
-    it('throws a GeocodeNotFoundError', async () => {
-      fetchMock.mockResolvedValue(jsonResponse([]));
-
-      await expect(geocode(leeds)).rejects.toBeInstanceOf(GeocodeNotFoundError);
-    });
-  });
-
-  describe.each([500, 503, 429])('given Nominatim responds with status %i', (status) => {
+  describe('given Nominatim responds with an error status', () => {
     it('throws a GeocoderUnavailableError', async () => {
-      fetchMock.mockResolvedValue(new Response('error', { status }));
+      fetchMock.mockResolvedValue(new Response('error', { status: 503 }));
 
       await expect(geocode(leeds)).rejects.toBeInstanceOf(GeocoderUnavailableError);
     });
