@@ -1,4 +1,4 @@
-import { parseLocationInput } from '../../../src/domain/validation';
+import { parseLocationId, parseLocationInput } from '../../../src/domain/validation';
 import { ValidationError } from '../../../src/domain/errors';
 
 const validBody = {
@@ -114,6 +114,30 @@ describe('parseLocationInput', () => {
       const error = getValidationError(body);
 
       expect(error.details).toEqual([{ field: 'body', message: expect.any(String) }]);
+    });
+  });
+});
+
+describe('parseLocationId', () => {
+  describe('given a valid UUID', () => {
+    it('returns the ID', () => {
+      const id = 'cdde1a1f-0422-489c-82b3-8c572a6fb9d8';
+
+      expect(parseLocationId(id)).toBe(id);
+    });
+  });
+
+  describe.each([
+    ['a non-UUID string', 'not-a-uuid'],
+    ['an empty string', ''],
+    ['undefined', undefined],
+  ])('given %s', (_label, id) => {
+    it('throws a ValidationError for locationId', () => {
+      expect(() => parseLocationId(id)).toThrow(
+        expect.objectContaining({
+          details: [{ field: 'locationId', message: 'Location ID must be a valid UUID' }],
+        }),
+      );
     });
   });
 });

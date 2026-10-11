@@ -8,9 +8,7 @@ export const locationInputSchema = z.object({
     country: z.string({ error: "Country is required" }).trim().min(1, "Country is required").max(100, "Country name is too long"),
 }).strict();
 
-export const idParamSchema = z.object({
-    id: z.uuid("Provided ID must be a valid UUID")
-});
+export const locationIdSchema = z.uuid("Location ID must be a valid UUID");
 
 
 export type LocationInput = z.infer<typeof locationInputSchema>;
@@ -25,6 +23,16 @@ export function parseLocationInput(body: unknown): LocationInput {
     );
   }
   
+  return result.data;
+}
+
+export function parseLocationId(id: unknown): string {
+  const result = locationIdSchema.safeParse(id);
+
+  if (!result.success) {
+    throw new ValidationError([{ field: 'locationId', message: result.error.issues[0].message }]);
+  }
+
   return result.data;
 }
 
