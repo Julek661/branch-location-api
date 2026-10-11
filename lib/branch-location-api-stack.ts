@@ -21,6 +21,9 @@ export class BranchLocationApiStack extends cdk.Stack {
     const createLocationFn = this.createFunction('CreateLocationFunction', 'create-location.ts', table);
     table.grantWriteData(createLocationFn);
 
+    const getLocationFn = this.createFunction('GetLocationFunction', 'get-location.ts', table);
+    table.grantReadData(getLocationFn);
+
     const accessLogs = new logs.LogGroup(this, 'BranchLocAccessLogs', {
       retention: logs.RetentionDays.ONE_MONTH,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -42,6 +45,11 @@ export class BranchLocationApiStack extends cdk.Stack {
 
     const locations = api.root.addResource('locations');
     locations.addMethod('POST', new apigateway.LambdaIntegration(createLocationFn), {
+      apiKeyRequired: true,
+    });
+
+    const location = locations.addResource('{id}');
+    location.addMethod('GET', new apigateway.LambdaIntegration(getLocationFn), {
       apiKeyRequired: true,
     });
 

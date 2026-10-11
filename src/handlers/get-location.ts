@@ -4,12 +4,15 @@ import { parseLocationId } from '../domain/validation';
 import { locationService } from '../dependencies';
 import { toErrorResponse, toJson } from '../http/responses';
 
-export const getLocationHandler = (service: LocationService) =>
+export const getLocationHandler =
+  (service: LocationService) =>
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    try { const location = await service.get(parseLocationId(event.pathParameters?.id));
-      
-        return toJson(200, location);
-    } catch (err) { return toErrorResponse(err);
+    try {
+      const location = await service.get(parseLocationId(event.pathParameters?.id));
+
+      return toJson(200, location);
+    } catch (err) {
+      return toErrorResponse(err);
     }
   };
 

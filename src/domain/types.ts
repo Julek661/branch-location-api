@@ -6,7 +6,7 @@ export interface Coordinates {
 }
 
 export interface Location extends LocationInput, Coordinates {
-  locationId: string; 
+  locationId: string;
   createdAt: string;
   updatedAt: string;
 }

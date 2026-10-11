@@ -36,10 +36,8 @@ export const parseCoordinates = (results: unknown): Coordinates => {
   return { latitude, longitude };
 };
 
-export const createNominatimGeocoder = (
-  { baseUrl, userAgent, timeoutMs }: NominatimGeocoderConfig,
-  fetchFn: typeof fetch,
-): Geocoder =>
+export const createNominatimGeocoder =
+  ({ baseUrl, userAgent, timeoutMs }: NominatimGeocoderConfig, fetchFn: typeof fetch): Geocoder =>
   async (input) => {
     let response: Response;
 

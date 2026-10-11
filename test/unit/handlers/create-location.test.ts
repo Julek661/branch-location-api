@@ -23,7 +23,7 @@ describe('createLocationHandler', () => {
       const created = { ...input, locationId: '123', latitude: 53.79, longitude: -1.54 };
       create.mockResolvedValue(created);
 
-  const response = await handler(event(input));
+      const response = await handler(event(input));
 
       expect(response.statusCode).toBe(201);
       expect(JSON.parse(response.body)).toEqual(created);

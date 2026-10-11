@@ -34,10 +34,12 @@ describe('buildSearchParams', () => {
 describe('parseCoordinates', () => {
   describe('given a match', () => {
     it('returns the first result as numbers', () => {
-      expect(parseCoordinates([
-        { lat: '53.7974185', lon: '-1.5437941' },
-        { lat: '0', lon: '0' },
-      ])).toEqual({ latitude: 53.7974185, longitude: -1.5437941 });
+      expect(
+        parseCoordinates([
+          { lat: '53.7974185', lon: '-1.5437941' },
+          { lat: '0', lon: '0' },
+        ]),
+      ).toEqual({ latitude: 53.7974185, longitude: -1.5437941 });
     });
   });
 

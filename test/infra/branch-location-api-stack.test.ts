@@ -30,23 +30,36 @@ describe('BranchLocationApiStack', () => {
         },
       });
     });
+  });
 
-    it('can write to the table but not read from it', () => {
-      template.hasResourceProperties('AWS::IAM::Policy', {
-        PolicyDocument: {
-          Statement: Match.arrayWith([
-            Match.objectLike({
-              Action: Match.arrayWith(['dynamodb:PutItem']),
-              Effect: 'Allow',
-            }),
-          ]),
+  describe('given the IAM policies', () => {
+    it('only lets the create function write to the table', () => {
+      template.resourcePropertiesCountIs(
+        'AWS::IAM::Policy',
+        {
+          PolicyDocument: {
+            Statement: Match.arrayWith([Match.objectLike({ Action: Match.arrayWith(['dynamodb:PutItem']) })]),
+          },
         },
-      });
-
-      const policies = JSON.stringify(template.findResources('AWS::IAM::Policy'));
-      expect(policies).not.toContain('dynamodb:GetItem');
-      expect(policies).not.toContain('dynamodb:Scan');
+        1,
+      );
     });
+
+    it('only lets the get function read from the table', () => {
+      template.resourcePropertiesCountIs(
+        'AWS::IAM::Policy',
+        {
+          PolicyDocument: {
+            Statement: Match.arrayWith([Match.objectLike({ Action: Match.arrayWith(['dynamodb:GetItem']) })]),
+          },
+        },
+        1,
+      );
+    });
+  });
+
+  it('creates one function per endpoint', () => {
+    template.resourceCountIs('AWS::Lambda::Function', 2);
   });
 
   describe('given the API', () => {
@@ -54,6 +67,14 @@ describe('BranchLocationApiStack', () => {
       template.hasResourceProperties('AWS::ApiGateway::Resource', { PathPart: 'locations' });
       template.hasResourceProperties('AWS::ApiGateway::Method', {
         HttpMethod: 'POST',
+        ApiKeyRequired: true,
+      });
+    });
+
+    it('exposes GET /locations/{id} protected by an API key', () => {
+      template.hasResourceProperties('AWS::ApiGateway::Resource', { PathPart: '{id}' });
+      template.hasResourceProperties('AWS::ApiGateway::Method', {
+        HttpMethod: 'GET',
         ApiKeyRequired: true,
       });
     });

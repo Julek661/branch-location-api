@@ -4,7 +4,8 @@ import { parseLocationInput } from '../domain/validation';
 import { locationService } from '../dependencies';
 import { toErrorResponse, toJson } from '../http/responses';
 
-export const createLocationHandler = (service: LocationService) =>
+export const createLocationHandler =
+  (service: LocationService) =>
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     let body: unknown;
     try {

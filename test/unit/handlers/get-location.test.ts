@@ -12,7 +12,7 @@ describe('getLocationHandler', () => {
   const handler = getLocationHandler({ create: jest.fn(), get });
 
   beforeEach(() => get.mockReset());
-describe('given an existing location ID', () => {
+  describe('given an existing location ID', () => {
     it('returns 200 with the location', async () => {
       const location = { locationId, locationName: 'Leeds Branch', city: 'Leeds', country: 'UK' };
       get.mockResolvedValue(location);

@@ -92,7 +92,7 @@ describe('parseLocationInput', () => {
     it('reports every missing required field at once', () => {
       const error = getValidationError({});
 
-      expect(error.details.map(d => d.field)).toEqual(['locationName', 'city', 'country']);
+      expect(error.details.map((d) => d.field)).toEqual(['locationName', 'city', 'country']);
     });
   });
 
