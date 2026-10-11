@@ -15,7 +15,7 @@ export const createLocationHandler = (service: LocationService) =>
 
     try {
       const location = await service.create(parseLocationInput(body));
-      return toJson(201, location);
+      return toJson(201, location, { Location: `/locations/${location.locationId}` });
     } catch (err) {
       return toErrorResponse(err);
     }
