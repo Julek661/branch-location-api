@@ -9,7 +9,7 @@ const input = {
 };
 
 describe('createLocationService', () => {
-  const repository = { create: jest.fn() };
+  const repository = { create: jest.fn(), get: jest.fn() };
   const geocode = jest.fn();
   const service = createLocationService({ repository, geocode });
 
