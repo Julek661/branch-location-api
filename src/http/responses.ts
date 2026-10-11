@@ -3,6 +3,7 @@ import { DomainError, ValidationError } from '../domain/errors';
 
 const statusByCode: Record<string, number> = {
   VALIDATION_ERROR: 400,
+  LOCATION_NOT_FOUND: 404,
   GEOCODE_NOT_FOUND: 422,
   GEOCODER_UNAVAILABLE: 502,
 };

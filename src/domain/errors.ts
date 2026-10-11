@@ -12,6 +12,14 @@ export class ValidationError extends DomainError {
   }
 }
 
+export class LocationNotFoundError extends DomainError {
+  readonly code = 'LOCATION_NOT_FOUND';
+  constructor(locationId: string) {
+    super(`Location ${locationId} not found`);
+    this.name = 'LocationNotFoundError';
+  }
+}
+
 export class GeocodeNotFoundError extends DomainError {
   readonly code = 'GEOCODE_NOT_FOUND';
   constructor(message = 'No coordinates found for the given location') {
