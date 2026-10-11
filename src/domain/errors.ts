@@ -11,3 +11,19 @@ export class ValidationError extends DomainError {
     this.name = 'ValidationError';
   }
 }
+
+export class GeocodeNotFoundError extends DomainError {
+  readonly code = 'GEOCODE_NOT_FOUND';
+  constructor(message = 'No coordinates found for the given location') {
+    super(message);
+    this.name = 'GeocodeNotFoundError';
+  }
+}
+
+export class GeocoderUnavailableError extends DomainError {
+  readonly code = 'GEOCODER_UNAVAILABLE';
+  constructor(message = 'Geocoding service is unavailable', options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'GeocoderUnavailableError';
+  }
+}
