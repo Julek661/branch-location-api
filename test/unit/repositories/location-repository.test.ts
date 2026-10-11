@@ -1,4 +1,4 @@
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { createDynamoLocationRepository } from '../../../src/repositories/location-repository';
 import type { Location } from '../../../src/domain/types';
 
@@ -47,6 +47,32 @@ describe('createDynamoLocationRepository', () => {
         send.mockRejectedValue(dynamoError);
 
         await expect(repository.create(leeds)).rejects.toBe(dynamoError);
+      });
+    });
+  });
+
+  describe('get', () => {
+    describe('given the location exists', () => {
+      it('gets it from the configured table by locationId', async () => {
+        send.mockResolvedValue({ Item: leeds });
+
+        const location = await repository.get(leeds.locationId);
+
+        expect(location).toEqual(leeds);
+        const command = send.mock.calls[0][0];
+        expect(command).toBeInstanceOf(GetCommand);
+        expect(command.input).toEqual({
+          TableName: 'locations-test',
+          Key: { locationId: leeds.locationId },
+        });
+      });
+    });
+
+    describe('given the location does not exist', () => {
+      it('returns null', async () => {
+        send.mockResolvedValue({});
+
+        await expect(repository.get(leeds.locationId)).resolves.toBeNull();
       });
     });
   });
