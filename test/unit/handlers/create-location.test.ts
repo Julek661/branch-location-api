@@ -1,7 +1,6 @@
 import type { APIGatewayProxyEvent } from 'aws-lambda';
 import { createLocationHandler } from '../../../src/handlers/create-location';
 import { GeocodeNotFoundError, GeocoderUnavailableError } from '../../../src/domain/errors';
-import type { LocationService } from '../../../src/domain/location-service';
 
 const input = {
   locationName: 'Leeds Branch',
@@ -15,7 +14,7 @@ const event = (body: unknown) =>
 
 describe('createLocationHandler', () => {
   const create = jest.fn();
-  const handler = createLocationHandler({ create } as LocationService);
+  const handler = createLocationHandler({ create, get: jest.fn() });
 
   beforeEach(() => create.mockReset());
 
@@ -24,7 +23,7 @@ describe('createLocationHandler', () => {
       const created = { ...input, locationId: '123', latitude: 53.79, longitude: -1.54 };
       create.mockResolvedValue(created);
 
-      const response = await handler(event(input));
+  const response = await handler(event(input));
 
       expect(response.statusCode).toBe(201);
       expect(JSON.parse(response.body)).toEqual(created);

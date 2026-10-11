@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { LocationNotFoundError } from './errors';
 import type { Geocoder } from '../services/geocoder';
 import type { LocationRepository } from '../repositories/location-repository';
 import type { Location } from './types';
@@ -6,6 +7,7 @@ import type { LocationInput } from './validation';
 
 export type LocationService = {
   create: (input: LocationInput) => Promise<Location>;
+  get: (locationId: string) => Promise<Location>;
 };
 
 export const createLocationService = (deps: {
@@ -25,6 +27,16 @@ export const createLocationService = (deps: {
     };
 
     await deps.repository.create(location);
+    return location;
+  },
+
+  get: async (locationId) => {
+    const location = await deps.repository.get(locationId);
+
+    if (!location) {
+      throw new LocationNotFoundError(locationId);
+    }
+
     return location;
   },
 });

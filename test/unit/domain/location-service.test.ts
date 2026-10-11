@@ -1,5 +1,5 @@
 import { createLocationService } from '../../../src/domain/location-service';
-import { GeocodeNotFoundError } from '../../../src/domain/errors';
+import { GeocodeNotFoundError, LocationNotFoundError } from '../../../src/domain/errors';
 
 const input = {
   locationName: 'Leeds Branch',
@@ -15,6 +15,7 @@ describe('createLocationService', () => {
 
   beforeEach(() => {
     repository.create.mockReset();
+    repository.get.mockReset();
     geocode.mockReset();
   });
 
@@ -43,6 +44,28 @@ describe('createLocationService', () => {
 
         await expect(service.create(input)).rejects.toBeInstanceOf(GeocodeNotFoundError);
         expect(repository.create).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('get', () => {
+    const locationId = 'cdde1a1f-0422-489c-82b3-8c572a6fb9d8';
+
+    describe('given the location exists', () => {
+      it('returns it', async () => {
+        const stored = { ...input, locationId, latitude: 53.79, longitude: -1.54 };
+        repository.get.mockResolvedValue(stored);
+
+        await expect(service.get(locationId)).resolves.toEqual(stored);
+        expect(repository.get).toHaveBeenCalledWith(locationId);
+      });
+    });
+
+    describe('given the location does not exist', () => {
+      it('throws a LocationNotFoundError', async () => {
+        repository.get.mockResolvedValue(null);
+
+        await expect(service.get(locationId)).rejects.toBeInstanceOf(LocationNotFoundError);
       });
     });
   });
