@@ -2,7 +2,7 @@ import { listLocationsHandler } from '../../../src/handlers/list-locations';
 
 describe('listLocationsHandler', () => {
   const list = jest.fn();
-  const handler = listLocationsHandler({ create: jest.fn(), get: jest.fn(), list });
+  const handler = listLocationsHandler({ create: jest.fn(), get: jest.fn(), update: jest.fn(), list });
 
   beforeEach(() => list.mockReset());
 

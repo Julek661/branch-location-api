@@ -77,6 +77,24 @@ describe('createDynamoLocationRepository', () => {
     });
   });
 
+  describe('update', () => {
+    describe('given an existing location', () => {
+      it('puts the location only if it already exists', async () => {
+        send.mockResolvedValue({});
+
+        await repository.update(input);
+
+        const command = send.mock.calls[0][0];
+        expect(command).toBeInstanceOf(PutCommand);
+        expect(command.input).toEqual({
+          TableName: 'locations-test',
+          Item: input,
+          ConditionExpression: 'attribute_exists(locationId)',
+        });
+      });
+    });
+  });
+
   describe('list', () => {
     const york: Location = { ...input, locationId: '7b2e9c40-1d2e-4f3a-8b4c-5d6e7f8a9b0c', city: 'York' };
 

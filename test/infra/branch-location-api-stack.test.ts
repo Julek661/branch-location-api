@@ -58,6 +58,18 @@ describe('BranchLocationApiStack', () => {
       );
     });
 
+    it('only lets the update function get and put items', () => {
+      template.resourcePropertiesCountIs(
+        'AWS::IAM::Policy',
+        {
+          PolicyDocument: {
+            Statement: Match.arrayWith([Match.objectLike({ Action: ['dynamodb:GetItem', 'dynamodb:PutItem'] })]),
+          },
+        },
+        1,
+      );
+    });
+
     it('only lets the list function scan the table', () => {
       template.resourcePropertiesCountIs(
         'AWS::IAM::Policy',
@@ -72,7 +84,7 @@ describe('BranchLocationApiStack', () => {
   });
 
   it('creates one function per endpoint', () => {
-    template.resourceCountIs('AWS::Lambda::Function', 3);
+    template.resourceCountIs('AWS::Lambda::Function', 4);
   });
 
   describe('given the API', () => {
@@ -96,6 +108,13 @@ describe('BranchLocationApiStack', () => {
       template.hasResourceProperties('AWS::ApiGateway::Resource', { PathPart: '{id}' });
       template.hasResourceProperties('AWS::ApiGateway::Method', {
         HttpMethod: 'GET',
+        ApiKeyRequired: true,
+      });
+    });
+
+    it('exposes PUT /locations/{id} protected by an API key', () => {
+      template.hasResourceProperties('AWS::ApiGateway::Method', {
+        HttpMethod: 'PUT',
         ApiKeyRequired: true,
       });
     });

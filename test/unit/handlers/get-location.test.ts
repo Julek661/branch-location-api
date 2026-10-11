@@ -9,7 +9,7 @@ const event = (id?: string) =>
 
 describe('getLocationHandler', () => {
   const get = jest.fn();
-  const handler = getLocationHandler({ create: jest.fn(), get, list: jest.fn() });
+  const handler = getLocationHandler({ create: jest.fn(), get, update: jest.fn(), list: jest.fn() });
 
   beforeEach(() => get.mockReset());
   describe('given an existing location ID', () => {

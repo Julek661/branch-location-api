@@ -4,6 +4,7 @@ import type { Location } from '../domain/types';
 export type LocationRepository = {
   create: (location: Location) => Promise<void>;
   get: (locationId: string) => Promise<Location | null>;
+  update: (location: Location) => Promise<void>;
   list: () => Promise<Location[]>;
 };
 
@@ -34,6 +35,16 @@ export const createDynamoLocationRepository = (
     );
 
     return (Item as Location | undefined) ?? null;
+  },
+
+  update: async (location) => {
+    await client.send(
+      new PutCommand({
+        TableName: tableName,
+        Item: location,
+        ConditionExpression: 'attribute_exists(locationId)',
+      }),
+    );
   },
 
   list: async () => {

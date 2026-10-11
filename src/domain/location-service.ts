@@ -8,6 +8,7 @@ import type { LocationInput } from './validation';
 export type LocationService = {
   create: (input: LocationInput) => Promise<Location>;
   get: (locationId: string) => Promise<Location>;
+  update: (locationId: string, input: LocationInput) => Promise<Location>;
   list: () => Promise<Location[]>;
 };
 
@@ -38,6 +39,27 @@ export const createLocationService = (deps: {
       throw new LocationNotFoundError(locationId);
     }
 
+    return location;
+  },
+
+  update: async (locationId, input) => {
+    const existing = await deps.repository.get(locationId);
+
+    if (!existing) {
+      throw new LocationNotFoundError(locationId);
+    }
+
+    const coordinates = await deps.geocode(input);
+
+    const location: Location = {
+      locationId,
+      ...input,
+      ...coordinates,
+      createdAt: existing.createdAt,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await deps.repository.update(location);
     return location;
   },
 
