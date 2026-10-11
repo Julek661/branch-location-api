@@ -57,10 +57,22 @@ describe('BranchLocationApiStack', () => {
         1,
       );
     });
+
+    it('only lets the list function scan the table', () => {
+      template.resourcePropertiesCountIs(
+        'AWS::IAM::Policy',
+        {
+          PolicyDocument: {
+            Statement: Match.arrayWith([Match.objectLike({ Action: 'dynamodb:Scan' })]),
+          },
+        },
+        1,
+      );
+    });
   });
 
   it('creates one function per endpoint', () => {
-    template.resourceCountIs('AWS::Lambda::Function', 2);
+    template.resourceCountIs('AWS::Lambda::Function', 3);
   });
 
   describe('given the API', () => {
@@ -68,6 +80,14 @@ describe('BranchLocationApiStack', () => {
       template.hasResourceProperties('AWS::ApiGateway::Resource', { PathPart: 'locations' });
       template.hasResourceProperties('AWS::ApiGateway::Method', {
         HttpMethod: 'POST',
+        ApiKeyRequired: true,
+      });
+    });
+
+    it('exposes GET /locations protected by an API key', () => {
+      template.hasResourceProperties('AWS::ApiGateway::Method', {
+        HttpMethod: 'GET',
+        ResourceId: { Ref: Match.stringLikeRegexp('locations[0-9A-F]{8}$') },
         ApiKeyRequired: true,
       });
     });

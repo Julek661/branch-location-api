@@ -1,9 +1,10 @@
-import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import type { Location } from '../domain/types';
 
 export type LocationRepository = {
   create: (location: Location) => Promise<void>;
   get: (locationId: string) => Promise<Location | null>;
+  list: () => Promise<Location[]>;
 };
 
 export interface DynamoLocationRepositoryConfig {
@@ -33,5 +34,24 @@ export const createDynamoLocationRepository = (
     );
 
     return (Item as Location | undefined) ?? null;
+  },
+
+  list: async () => {
+    const locations: Location[] = [];
+    let startKey: Record<string, unknown> | undefined;
+
+    do {
+      const { Items, LastEvaluatedKey } = await client.send(
+        new ScanCommand({
+          TableName: tableName,
+          ExclusiveStartKey: startKey,
+        }),
+      );
+
+      locations.push(...((Items ?? []) as Location[]));
+      startKey = LastEvaluatedKey;
+    } while (startKey);
+
+    return locations;
   },
 });

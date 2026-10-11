@@ -9,13 +9,14 @@ const input = {
 };
 
 describe('createLocationService', () => {
-  const repository = { create: jest.fn(), get: jest.fn() };
+  const repository = { create: jest.fn(), get: jest.fn(), list: jest.fn() };
   const geocode = jest.fn();
   const service = createLocationService({ repository, geocode });
 
   beforeEach(() => {
     repository.create.mockReset();
     repository.get.mockReset();
+    repository.list.mockReset();
     geocode.mockReset();
   });
 
@@ -66,6 +67,25 @@ describe('createLocationService', () => {
         repository.get.mockResolvedValue(null);
 
         await expect(service.get(locationId)).rejects.toBeInstanceOf(LocationNotFoundError);
+      });
+    });
+  });
+
+  describe('list', () => {
+    describe('given stored locations', () => {
+      it('returns them all', async () => {
+        const stored = [{ ...input, locationId: '1' }, { ...input, locationId: '2', city: 'York' }];
+        repository.list.mockResolvedValue(stored);
+
+        await expect(service.list()).resolves.toEqual(stored);
+      });
+    });
+
+    describe('given no locations', () => {
+      it('returns an empty list', async () => {
+        repository.list.mockResolvedValue([]);
+
+        await expect(service.list()).resolves.toEqual([]);
       });
     });
   });

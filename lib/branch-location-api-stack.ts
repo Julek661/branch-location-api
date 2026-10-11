@@ -25,6 +25,9 @@ export class BranchLocationApiStack extends cdk.Stack {
     const getLocationFn = this.createFunction('GetLocationFunction', 'get-location.ts', table);
     table.grant(getLocationFn, 'dynamodb:GetItem');
 
+    const listLocationsFn = this.createFunction('ListLocationsFunction', 'list-locations.ts', table);
+    table.grant(listLocationsFn, 'dynamodb:Scan');
+
     const accessLogs = new logs.LogGroup(this, 'BranchLocAccessLogs', {
       retention: logs.RetentionDays.ONE_MONTH,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -46,6 +49,9 @@ export class BranchLocationApiStack extends cdk.Stack {
 
     const locations = api.root.addResource('locations');
     locations.addMethod('POST', new apigateway.LambdaIntegration(createLocationFn), {
+      apiKeyRequired: true,
+    });
+    locations.addMethod('GET', new apigateway.LambdaIntegration(listLocationsFn), {
       apiKeyRequired: true,
     });
 

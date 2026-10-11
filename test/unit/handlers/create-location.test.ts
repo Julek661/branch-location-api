@@ -14,7 +14,7 @@ const event = (body: unknown) =>
 
 describe('createLocationHandler', () => {
   const create = jest.fn();
-  const handler = createLocationHandler({ create, get: jest.fn() });
+  const handler = createLocationHandler({ create, get: jest.fn(), list: jest.fn() });
 
   beforeEach(() => create.mockReset());
 

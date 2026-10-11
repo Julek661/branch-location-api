@@ -8,6 +8,7 @@ import type { LocationInput } from './validation';
 export type LocationService = {
   create: (input: LocationInput) => Promise<Location>;
   get: (locationId: string) => Promise<Location>;
+  list: () => Promise<Location[]>;
 };
 
 export const createLocationService = (deps: {
@@ -39,4 +40,6 @@ export const createLocationService = (deps: {
 
     return location;
   },
+
+  list: () => deps.repository.list(),
 });
